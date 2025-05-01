@@ -44,6 +44,8 @@ class MainActivity : ComponentActivity() {
             val topLevelRoutes = listOf<TopLevelRoutes>(
                 TopLevelRoutes("Day summary", Routes.DaySummary.routes, Icons.Outlined.Home),
                 TopLevelRoutes("Profile",Routes.Profile.routes,Icons.Outlined.Person),
+                TopLevelRoutes("Сводка дня", Routes.DaySummary.routes, Icons.Outlined.Home),
+                TopLevelRoutes("Профиль",Routes.Profile.routes,Icons.Outlined.Person),
             )
 
             FitEatTheme {

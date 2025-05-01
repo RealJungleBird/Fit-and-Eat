@@ -7,6 +7,6 @@ import androidx.compose.runtime.Composable
 @Composable
 fun DaySummary() {
     Column {
-        Text(text = "Day summary")
+        Text(text = "Сводка за день")
     }
 }
