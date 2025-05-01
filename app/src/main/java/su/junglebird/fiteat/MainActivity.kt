@@ -42,9 +42,8 @@ class MainActivity : ComponentActivity() {
 
 
             val topLevelRoutes = listOf<TopLevelRoutes>(
-                TopLevelRoutes("Day summary", Routes.DaySummary.routes, Icons.Outlined.Home),
-                TopLevelRoutes("Profile",Routes.Profile.routes,Icons.Outlined.Person),
                 TopLevelRoutes("Сводка дня", Routes.DaySummary.routes, Icons.Outlined.Home),
+                TopLevelRoutes("Мои блюда", Routes.MyDishes.routes, Icons.Outlined.Menu),
                 TopLevelRoutes("Профиль",Routes.Profile.routes,Icons.Outlined.Person),
             )
 
@@ -82,6 +81,7 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     NavHost(navController = navController, startDestination = Routes.Profile.routes) {
                         composable(Routes.Profile.routes) { Profile() }
+                        composable(Routes.MyDishes.routes) { MyDishes() }
                         composable(Routes.DaySummary.routes) { DaySummary() }
                     }
 
