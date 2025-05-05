@@ -3,7 +3,14 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.devtoolsKsp)
+
+    // Hilt
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
+
+//apply(plugin = "dagger.hilt.android.plugin")
+//apply(plugin = "kotlin-kapt")
 
 android {
     namespace = "su.junglebird.fiteat"
@@ -55,6 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.room.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -63,10 +71,23 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Room (Database)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation (libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    annotationProcessor(libs.androidx.room.room.compiler)
-    ksp(libs.androidx.room.room.compiler)
+    kapt(libs.androidx.room.room.compiler)
+    //ksp(libs.androidx.room.room.compiler)
+
+    // Hilt (Dependency injection)
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
+    //annotationProcessor(libs.hilt.compiler)
+        // for Jetpack Compose support
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+
+}
+
+kapt {
+    correctErrorTypes = true
 }
