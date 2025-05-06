@@ -8,18 +8,18 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -60,7 +60,8 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController)
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
         popExitTransition = { ExitTransition.None },
-        modifier = Modifier.padding(paddingValues2)) {
+        modifier = Modifier.padding(paddingValues2)
+    ) {
         composable(route = Routes.Profile.route) { Profile() }
         composable(Routes.MyDishes.route) { MyDishes() }
         composable(Routes.DaySummary.route) { DaySummary() }
@@ -72,7 +73,7 @@ fun Main() {
     val navController = rememberNavController()
 
     val topLevelRoutes = listOf<TopLevelRoutes>(
-        TopLevelRoutes("Сводка дня", Routes.DaySummary.route, Icons.Outlined.Home),
+        TopLevelRoutes("Сводка дня", Routes.DaySummary.route, ImageVector.vectorResource(R.drawable.icon_today)),
         TopLevelRoutes("Мои блюда", Routes.MyDishes.route, Icons.Outlined.Menu),
         TopLevelRoutes("Профиль",Routes.Profile.route,Icons.Outlined.Person),
     )
@@ -84,11 +85,11 @@ fun Main() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            BottomNavigation {
+            NavigationBar {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
                 topLevelRoutes.forEach {topLevelRoute ->
-                    BottomNavigationItem(
+                    NavigationBarItem(
                         selected = currentDestination?.route == topLevelRoute.routes,
                         onClick = {
                             navController.navigate(topLevelRoute.routes){
@@ -114,21 +115,5 @@ fun Main() {
 
     ) { innerPadding ->
         Navigation(innerPadding, navController)
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FitEatTheme {
-        Greeting("Android")
     }
 }
