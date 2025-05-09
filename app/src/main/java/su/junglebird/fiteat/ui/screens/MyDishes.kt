@@ -1,6 +1,5 @@
 package su.junglebird.fiteat.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import su.junglebird.fiteat.data.database.entities.CustomDish
@@ -55,7 +53,7 @@ fun MyDishes(viewModel: MyDishesViewModel = hiltViewModel()) {
         LazyColumn {
             items(dishes) { dish ->
                 EditableDishCard(
-                    item = dish,
+                    dish = dish,
                     onEditClick = { viewModel.startEditing(it) },
                     onDelete = { viewModel.deleteDish(it) }
                 )
@@ -81,11 +79,11 @@ fun MyDishes(viewModel: MyDishesViewModel = hiltViewModel()) {
     }
 }
 
-data class Dish(var dishName: String, var dishCalories: String, var isDialogShown: Boolean = false) {}
+//data class Dish(var dishName: String, var dishCalories: String, var isDialogShown: Boolean = false) {}
 
 @Composable
 fun EditableDishCard(
-    item: CustomDish,
+    dish: CustomDish,
     onEditClick: (CustomDish) -> Unit,
     onDelete: (CustomDish) -> Unit,
     isDarker: Boolean = false
@@ -107,17 +105,17 @@ fun EditableDishCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = item.name,
+            Text(text = dish.name,
                 fontSize = 14.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1F).padding(end = 4.dp))
-            Text(text = "${item.calories} Ккал",
+            Text(text = "${dish.calories} Ккал",
                 fontSize = 14.sp,
                 maxLines = 1,
                 modifier = Modifier.wrapContentWidth(Alignment.End))
-            IconButton(onClick = { onEditClick(item) }) { Icon(Icons.Default.Edit, "Edit") }
-            IconButton(onClick = { onDelete(item) }) { Icon(Icons.Default.Delete, "Delete") }
+            IconButton(onClick = { onEditClick(dish) }) { Icon(Icons.Default.Edit, "Edit") }
+            IconButton(onClick = { onDelete(dish) }) { Icon(Icons.Default.Delete, "Delete") }
         }
     }
 
