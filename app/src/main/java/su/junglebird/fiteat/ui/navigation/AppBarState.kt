@@ -10,16 +10,17 @@ data class AppBarState (
 
 fun getAppBarState(route: String?): AppBarState {
     return when(route) {
-        Routes.Profile.route -> AppBarState(
-            title = "Профиль",
-            actions = {}
-        )
         Routes.DaySummary.route -> AppBarState(
             title = "Сводка за день",
             actions = {}
         )
+
         Routes.MyDishes.route -> AppBarState(
             title = "Мои блюда",
+            actions = {}
+        )
+        Routes.Profile.route -> AppBarState(
+            title = "Профиль",
             actions = {}
         )
         else -> AppBarState()

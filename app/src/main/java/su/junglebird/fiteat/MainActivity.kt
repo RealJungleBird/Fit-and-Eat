@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -20,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -50,7 +48,7 @@ class MainActivity : ComponentActivity() {
 fun Navigation(paddingValues: PaddingValues, navController: NavHostController)
 {
     val paddingValues2 = PaddingValues(
-        start = 16.dp, end = 16.dp,
+        start = 0.dp, end = 0.dp,
         top=paddingValues.calculateTopPadding(),
         bottom=paddingValues.calculateBottomPadding())
     NavHost(
@@ -74,8 +72,8 @@ fun Main() {
 
     val topLevelRoutes = listOf<TopLevelRoutes>(
         TopLevelRoutes("Сводка дня", Routes.DaySummary.route, ImageVector.vectorResource(R.drawable.icon_today)),
-        TopLevelRoutes("Мои блюда", Routes.MyDishes.route, Icons.Outlined.Menu),
-        TopLevelRoutes("Профиль",Routes.Profile.route,Icons.Outlined.Person),
+        TopLevelRoutes("Мои блюда", Routes.MyDishes.route, ImageVector.vectorResource(R.drawable.icon_menu_book)),
+        TopLevelRoutes("Профиль",Routes.Profile.route, Icons.Outlined.Person),
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -110,7 +108,7 @@ fun Main() {
             }
         },
         topBar = @OptIn(ExperimentalMaterial3Api::class){
-            TopAppBar(title = {Text(appBarState.title)})
+            TopAppBar(title = { Text(text = appBarState.title) })
         }
 
     ) { innerPadding ->
