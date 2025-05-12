@@ -25,6 +25,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -115,7 +116,15 @@ fun EditableDishCard(
                 maxLines = 1,
                 modifier = Modifier.wrapContentWidth(Alignment.End))
             IconButton(onClick = { onEditClick(dish) }) { Icon(Icons.Default.Edit, "Edit") }
-            IconButton(onClick = { onDelete(dish) }) { Icon(Icons.Default.Delete, "Delete") }
+            IconButton(
+                onClick = { onDelete(dish) }
+            ) {
+                Icon(
+                    Icons.Default.Delete,
+                    "Delete",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 

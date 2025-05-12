@@ -4,14 +4,15 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+// сущность для хранения информации о пользовательских блюдах
 @Entity(tableName = "customDishes")
 data class CustomDish(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val id: Long = 0,   // автоинкрементный ID
 
     @ColumnInfo(name = "name")
-    val name: String,
+    val name: String,   // название блюда
 
     @ColumnInfo(name = "calories")
-    val calories: Int
+    val calories: Int   // калорийность блюда
 )

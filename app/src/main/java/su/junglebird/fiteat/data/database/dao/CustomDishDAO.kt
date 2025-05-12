@@ -10,6 +10,7 @@ import su.junglebird.fiteat.data.database.entities.CustomDish
 
 @Dao
 interface CustomDishDAO {
+    // получение всех блюд, отсортированных по ID
     @Query("SELECT * FROM customDishes ORDER BY id DESC")
     fun getAllDishes(): Flow<List<CustomDish>>
 

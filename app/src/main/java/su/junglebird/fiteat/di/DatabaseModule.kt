@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import su.junglebird.fiteat.data.database.dao.CustomDishDAO
 import su.junglebird.fiteat.data.database.AppDatabase
+import su.junglebird.fiteat.data.database.dao.DailyMenuItemDAO
 import javax.inject.Singleton
 
 @Module
@@ -18,6 +19,11 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
         return AppDatabase.getInstance(context)
+    }
+
+    @Provides
+    fun provideDailyMenuItemDao(database: AppDatabase): DailyMenuItemDAO {
+        return database.dailyMenuItemDAO()
     }
 
     @Provides
