@@ -89,6 +89,8 @@ fun EditableDishCard(
     onDelete: (CustomDish) -> Unit,
     isDarker: Boolean = false
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     Card(colors = CardDefaults.cardColors(
             //containerColor = if(index % 2 == 0) Color(0xffdddddd) else Color(0xffffffff)
         ),
@@ -110,14 +112,16 @@ fun EditableDishCard(
                 fontSize = 14.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1F).padding(end = 4.dp))
+                modifier = Modifier
+                    .weight(1F)
+                    .padding(end = 4.dp))
             Text(text = "${dish.calories} Ккал",
                 fontSize = 14.sp,
                 maxLines = 1,
                 modifier = Modifier.wrapContentWidth(Alignment.End))
             IconButton(onClick = { onEditClick(dish) }) { Icon(Icons.Default.Edit, "Edit") }
             IconButton(
-                onClick = { onDelete(dish) }
+                onClick = { showDeleteDialog = true }
             ) {
                 Icon(
                     Icons.Default.Delete,
@@ -126,6 +130,17 @@ fun EditableDishCard(
                 )
             }
         }
+    }
+
+    if(showDeleteDialog) {
+        DeleteDishDialog(
+            dish = dish,
+            onConfirm =  {
+                onDelete(dish)
+                showDeleteDialog = false
+            },
+            onDismiss =  { showDeleteDialog = false }
+        )
     }
 
 }
@@ -169,6 +184,44 @@ fun EditDishDialog(
         },
         dismissButton = {
             Button(onClick = onDismiss) { Text("Отмена") }
+        }
+    )
+}
+
+
+@Composable
+fun DeleteDishDialog(
+    dish: CustomDish,
+    onConfirm: (CustomDish) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = Modifier.padding(24.dp),
+        title = {
+            Text(
+                text = "Подтвердите удаление",
+                style = MaterialTheme.typography.headlineSmall
+            )
+        },
+        text = {
+            Text("Вы уверены, что хотите удалить блюдо ${dish.name}?")
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { onConfirm(dish) },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(text = "Да")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { onDismiss() },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(text = "Нет")
+            }
         }
     )
 }

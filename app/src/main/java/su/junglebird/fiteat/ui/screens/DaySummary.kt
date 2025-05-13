@@ -83,7 +83,9 @@ fun DaySummary(viewModel: DaySummaryViewModel = hiltViewModel()) {
             Text("Меню на сегодня:")
             // список пунктов меню
             LazyColumn(
-                modifier = Modifier.padding(padding).fillMaxWidth()
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxWidth()
             ) {
                 items(dailyMenuItems) { menuItem ->
                     // поиск соответствующего блюда по ID
@@ -121,6 +123,8 @@ fun DailyMenuItemCard(
     dish: CustomDish,
     onRemove: () -> Unit
 ) {
+    var showRemoveDialog by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -144,7 +148,7 @@ fun DailyMenuItemCard(
             }
             // кнопка удаления
             IconButton(
-                onClick = onRemove
+                onClick = { showRemoveDialog = true }
             ) {
                 Icon(
                     Icons.Default.Delete,
@@ -153,6 +157,17 @@ fun DailyMenuItemCard(
                 )
             }
         }
+    }
+
+    if(showRemoveDialog) {
+        MenuItemRemoveDialog(
+            dish.name,
+            onConfirm =  {
+                onRemove()
+                showRemoveDialog = false
+            },
+            onDismiss =  { showRemoveDialog = false }
+        )
     }
 }
 
@@ -197,6 +212,44 @@ fun DishSelectorDialog(
                 modifier = Modifier.padding(8.dp)
             ) {
                 Text(text = "Отмена")
+            }
+        }
+    )
+}
+
+
+@Composable
+fun MenuItemRemoveDialog(
+    dishName: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = Modifier.padding(24.dp),
+        title = {
+            Text(
+                text = "Подтвердите удаление",
+                style = MaterialTheme.typography.headlineSmall
+            )
+        },
+        text = {
+            Text("Вы уверены, что хотите убрать блюдо ${dishName}?")
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(text = "Да")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(text = "Нет")
             }
         }
     )
