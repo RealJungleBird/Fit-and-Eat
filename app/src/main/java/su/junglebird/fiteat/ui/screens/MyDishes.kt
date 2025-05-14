@@ -80,7 +80,6 @@ fun MyDishes(viewModel: MyDishesViewModel = hiltViewModel()) {
     }
 }
 
-//data class Dish(var dishName: String, var dishCalories: String, var isDialogShown: Boolean = false) {}
 
 @Composable
 fun EditableDishCard(
@@ -177,13 +176,13 @@ fun EditDishDialog(
         },
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = { onSave(dish.copy(name = editedDishName, calories = editedDishCalories.toIntOrNull() ?: 0)) },
                 enabled = editedDishName.isNotBlank() && editedDishCalories.isNotBlank()
             ) { Text("Сохранить") }
         },
         dismissButton = {
-            Button(onClick = onDismiss) { Text("Отмена") }
+            TextButton(onClick = onDismiss) { Text("Отмена") }
         }
     )
 }
@@ -208,7 +207,7 @@ fun DeleteDishDialog(
             Text("Вы уверены, что хотите удалить блюдо ${dish.name}?")
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = { onConfirm(dish) },
                 modifier = Modifier.padding(8.dp)
             ) {
