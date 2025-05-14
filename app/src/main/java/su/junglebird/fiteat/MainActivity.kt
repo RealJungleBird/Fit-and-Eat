@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
 fun Navigation(paddingValues: PaddingValues, navController: NavHostController)
 {
     val paddingValues2 = PaddingValues(
-        start = 0.dp, end = 0.dp,
+        start = 10.dp, end = 10.dp,
         top=paddingValues.calculateTopPadding(),
         bottom=paddingValues.calculateBottomPadding())
     NavHost(

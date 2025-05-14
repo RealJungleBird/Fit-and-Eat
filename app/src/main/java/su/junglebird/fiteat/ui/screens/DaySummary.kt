@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.modifier.modifierLocalMapOf
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,7 +58,9 @@ fun DaySummary(viewModel: DaySummaryViewModel = hiltViewModel()) {
     val dailyMenuItems by viewModel.dailyMenuItems.collectAsState() // список пунктов меню
     val dailyDishes by viewModel.dailyDishes.collectAsState() // список блюд для текущей даты
     val allDishes by viewModel.dishes.collectAsState() // все доступные блюда
+    val totalCalories by viewModel.dailyCalories.collectAsState()
     var showSelector by remember { mutableStateOf(false) } // активен ли диалог выбора
+
 
     // основной макет экрана
     Scaffold(
@@ -78,16 +81,24 @@ fun DaySummary(viewModel: DaySummaryViewModel = hiltViewModel()) {
         Column {
             val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
-            Text(currentDate)
-            Text(text = "Всего употреблено:")
+            Text("Статистика за $currentDate")
             Text(
-                text = "168" + " Ккал",
-                fontSize = 35.sp
+                text = "Всего употреблено:",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "$totalCalories Ккал",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Text("Меню на сегодня:")
+            Text(
+                text = "Меню на сегодня:",
+                style = MaterialTheme.typography.titleMedium
+            )
             // список пунктов меню
             LazyColumn(
                 modifier = Modifier

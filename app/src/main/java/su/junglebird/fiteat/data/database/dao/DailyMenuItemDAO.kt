@@ -22,6 +22,17 @@ interface DailyMenuItemDAO {
     """)
     fun getDishesForDate(date: String): Flow<List<CustomDish>>
 
+    // получение суммы калорий за указанную дату
+    @Query("""
+        SELECT SUM(c.calories) FROM customDishes c
+        INNER JOIN daily_menu_items d ON c.id = d.dishId
+        WHERE d.date = :date
+    """)
+    fun getTotalCaloriesForDate(date: String): Flow<Int?>
+
+
+
+
     @Insert
     suspend fun insert(menuItem: DailyMenuItem)
 

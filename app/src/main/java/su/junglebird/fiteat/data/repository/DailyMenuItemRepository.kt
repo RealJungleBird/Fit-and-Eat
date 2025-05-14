@@ -9,6 +9,7 @@ class DailyMenuItemRepository @Inject constructor(
 ) {
     fun getItemsForDate(date: String) = dao.getItemsForDate(date)
     fun getDishesForDate(date: String) = dao.getDishesForDate(date)
+    fun getDailyCalories(date: String) = dao.getTotalCaloriesForDate(date)
 
     suspend fun addToMenu(date: String, dishId: Long) {
         dao.insert(DailyMenuItem(date = date, dishId = dishId))

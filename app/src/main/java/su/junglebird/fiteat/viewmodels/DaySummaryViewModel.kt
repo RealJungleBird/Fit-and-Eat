@@ -45,6 +45,13 @@ class DaySummaryViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
+    val dailyCalories = menuItemRepository.getDailyCalories(currentDate)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
+        )
+
     // Добавление блюда в меню
     fun addDishToMenu(dish: CustomDish) = viewModelScope.launch {
         menuItemRepository.addToMenu(currentDate, dish.id)
