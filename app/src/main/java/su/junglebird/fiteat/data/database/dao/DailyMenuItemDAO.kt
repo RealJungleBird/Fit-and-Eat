@@ -22,9 +22,9 @@ interface DailyMenuItemDAO {
     """)
     fun getDishesForDate(date: String): Flow<List<CustomDish>>
 
-    // получение суммы калорий за указанную дату
+    // Получение суммы калорий за указанную дату
     @Query("""
-        SELECT SUM(c.calories) FROM customDishes c
+        SELECT COALESCE(SUM(c.calories), 0) FROM customDishes c
         INNER JOIN daily_menu_items d ON c.id = d.dishId
         WHERE d.date = :date
     """)
