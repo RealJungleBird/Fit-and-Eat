@@ -47,7 +47,7 @@ android {
 }
 
 dependencies {
-    implementation("androidx.compose.material:material:1.7.8")
+    implementation(libs.androidx.material)
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.androidx.core.ktx)

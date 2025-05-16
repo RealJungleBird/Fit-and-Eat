@@ -7,6 +7,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Person
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import su.junglebird.fiteat.ui.navigation.*
@@ -63,6 +65,7 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController)
         composable(route = Routes.Profile.route) { Profile() }
         composable(Routes.MyDishes.route) { MyDishes() }
         composable(Routes.DaySummary.route) { DaySummary() }
+        composable(Routes.Analytics.route) { Analytics() }
     }
 }
 
@@ -72,6 +75,7 @@ fun Main() {
 
     val topLevelRoutes = listOf<TopLevelRoutes>(
         TopLevelRoutes("Сводка дня", Routes.DaySummary.route, ImageVector.vectorResource(R.drawable.icon_today)),
+        TopLevelRoutes("Аналитика", Routes.Analytics.route, ImageVector.vectorResource(R.drawable.icon_chart)),
         TopLevelRoutes("Мои блюда", Routes.MyDishes.route, ImageVector.vectorResource(R.drawable.icon_menu_book)),
         TopLevelRoutes("Профиль",Routes.Profile.route, Icons.Outlined.Person),
     )
@@ -102,13 +106,18 @@ fun Main() {
 
                         },
                         icon = { Icon(topLevelRoute.icon,"иконка") },
-                        label = { Text(text = topLevelRoute.name)}
+                        label = { Text(
+                            text = topLevelRoute.name,
+                            maxLines = 1,
+                            fontSize = 10.sp
+                        )}
                     )
                 }
             }
         },
         topBar = @OptIn(ExperimentalMaterial3Api::class){
-            TopAppBar(title = { Text(text = appBarState.title) })
+            TopAppBar(title = { Text(text = appBarState.title) },
+            modifier = Modifier.height(0.dp))
         }
 
     ) { innerPadding ->

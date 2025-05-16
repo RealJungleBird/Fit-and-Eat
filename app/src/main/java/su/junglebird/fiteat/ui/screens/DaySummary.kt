@@ -25,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -34,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -62,6 +64,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DaySummary(viewModel: DaySummaryViewModel = hiltViewModel()) {
     // Состояния данных
@@ -76,6 +79,10 @@ fun DaySummary(viewModel: DaySummaryViewModel = hiltViewModel()) {
 
     // Основной макет экрана
     Scaffold(
+        topBar = {
+            TopAppBar(title = { Text("Сводка за день") })
+        },
+
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showSelector = true },
@@ -112,12 +119,13 @@ fun DaySummary(viewModel: DaySummaryViewModel = hiltViewModel()) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             Text(
                 text = "Всего употреблено:",
                 style = MaterialTheme.typography.titleLarge
             )
+            //Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "$totalCalories Ккал",
                 style = MaterialTheme.typography.headlineLarge,
@@ -125,7 +133,7 @@ fun DaySummary(viewModel: DaySummaryViewModel = hiltViewModel()) {
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             Text(
                 text = "Меню на сегодня:",
