@@ -69,7 +69,6 @@ dependencies {
 
     implementation (libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    //annotationProcessor(libs.androidx.room.room.compiler)
 
     // Room
     implementation(libs.androidx.room.runtime)
@@ -80,6 +79,10 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
+
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 }
 
 kapt {
