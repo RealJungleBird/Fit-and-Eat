@@ -80,9 +80,15 @@ fun DaySummary(viewModel: DaySummaryViewModel = hiltViewModel()) {
     // Основной макет экрана
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Сводка за день") })
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Сводка за день",
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            )
         },
-
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showSelector = true },
@@ -97,65 +103,68 @@ fun DaySummary(viewModel: DaySummaryViewModel = hiltViewModel()) {
         }
     ) { padding ->
 
-        Column {
-            // Панель с датой
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                IconButton(onClick = { viewModel.changeDate(-1) }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Предыдущий день")
+        LazyColumn(
+            modifier = Modifier.padding(
+                top = padding.calculateTopPadding(),
+                bottom = padding.calculateBottomPadding()
+            )
+        ) {
+            item {
+                // Панель с датой
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    IconButton(onClick = { viewModel.changeDate(-1) }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Предыдущий день")
+                    }
+                    Text(
+                        text = viewModel.currentDate.formatDate(),
+                        modifier = Modifier
+                            .clickable { showDatePicker = true }
+                            .padding(horizontal = 16.dp),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    IconButton(onClick = { viewModel.changeDate(1) }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowForward, "Следующий день")
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
                 Text(
-                    text = viewModel.currentDate.formatDate(),
-                    modifier = Modifier
-                        .clickable { showDatePicker = true }
-                        .padding(horizontal = 16.dp),
+                    text = "Всего употреблено:",
                     style = MaterialTheme.typography.titleLarge
                 )
-                IconButton(onClick = { viewModel.changeDate(1) }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowForward, "Следующий день")
-                }
+                //Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "$totalCalories Ккал",
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    text = "Меню на сегодня:",
+                    style = MaterialTheme.typography.titleLarge
+                )
+
             }
 
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Text(
-                text = "Всего употреблено:",
-                style = MaterialTheme.typography.titleLarge
-            )
-            //Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = "$totalCalories Ккал",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = "Меню на сегодня:",
-                style = MaterialTheme.typography.titleLarge
-            )
             // список пунктов меню
-            LazyColumn(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxWidth()
-            ) {
-                items(dailyMenuItems) { menuItem ->
-                    // поиск соответствующего блюда по ID
-                    val dish = dailyDishes.firstOrNull { it.id == menuItem.dishId }
+            items(dailyMenuItems) { menuItem ->
+                // поиск соответствующего блюда по ID
+                val dish = dailyDishes.firstOrNull { it.id == menuItem.dishId }
 
-                    dish?.let {
-                        DailyMenuItemCard(
-                            dish = it,
-                            onRemove = { viewModel.removeFromMenu(menuItem) }
-                        )
-                        HorizontalDivider(thickness = 1.dp)
-                    }
+                dish?.let {
+                    DailyMenuItemCard(
+                        dish = it,
+                        onRemove = { viewModel.removeFromMenu(menuItem) }
+                    )
+                    HorizontalDivider(thickness = 1.dp)
                 }
             }
         }
@@ -220,7 +229,7 @@ fun DailyMenuItemCard(
                 onClick = { showRemoveDialog = true }
             ) {
                 Icon(
-                    Icons.Default.Delete,
+                    imageVector =  Icons.Default.Delete,
                     contentDescription = "Удалить",
                     tint = MaterialTheme.colorScheme.error
                 )

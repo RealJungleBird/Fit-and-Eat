@@ -1,11 +1,9 @@
 package su.junglebird.fiteat.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -55,15 +55,40 @@ fun MyDishes(viewModel: MyDishesViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Мои блюда") })
-        }
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Мои блюда",
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { viewModel.createNewItem() },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Добавить блюдо",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        backgroundColor = Color.Transparent
     ) { padding ->
 
-    }
+        LazyColumn(
+            modifier = Modifier.padding(
+                top = padding.calculateTopPadding(),
+                bottom = padding.calculateBottomPadding()
+            )
+        ) {
+            item {
 
-    Box(modifier = Modifier.fillMaxSize()) {
+            }
 
-        LazyColumn {
             items(dishes) { dish ->
                 EditableDishCard(
                     dish = dish,
@@ -71,24 +96,17 @@ fun MyDishes(viewModel: MyDishesViewModel = hiltViewModel()) {
                     onDelete = { viewModel.deleteDish(it) }
                 )
             }
-        }
 
-        FloatingActionButton(
-            onClick = { viewModel.createNewItem() },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-        ) {
-            Icon(Icons.Default.Add, contentDescription = "Add dish")
+            item {
+                viewModel.editedDish?.let { dish ->
+                    EditDishDialog(
+                        dish = dish,
+                        onDismiss = { viewModel.startEditing(null) },
+                        onSave = { updatedDish -> viewModel.saveDish(updatedDish)}
+                    )
+                }
+            }
         }
-    }
-
-    viewModel.editedDish?.let { dish ->
-        EditDishDialog(
-            dish = dish,
-            onDismiss = { viewModel.startEditing(null) },
-            onSave = { updatedDish -> viewModel.saveDish(updatedDish)}
-        )
     }
 }
 
@@ -98,18 +116,15 @@ fun EditableDishCard(
     dish: CustomDish,
     onEditClick: (CustomDish) -> Unit,
     onDelete: (CustomDish) -> Unit,
-    isDarker: Boolean = false
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    Card(colors = CardDefaults.cardColors(
-            //containerColor = if(index % 2 == 0) Color(0xffdddddd) else Color(0xffffffff)
-        ),
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp),
 
-        shape = RoundedCornerShape(0)
+        //shape = RoundedCornerShape(0)
     ) {
         Row(
             modifier = Modifier
@@ -130,13 +145,20 @@ fun EditableDishCard(
                 fontSize = 14.sp,
                 maxLines = 1,
                 modifier = Modifier.wrapContentWidth(Alignment.End))
-            IconButton(onClick = { onEditClick(dish) }) { Icon(Icons.Default.Edit, "Edit") }
+            IconButton(
+                onClick = { onEditClick(dish) }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit"
+                )
+            }
             IconButton(
                 onClick = { showDeleteDialog = true }
             ) {
                 Icon(
-                    Icons.Default.Delete,
-                    "Delete",
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
                     tint = MaterialTheme.colorScheme.error
                 )
             }
