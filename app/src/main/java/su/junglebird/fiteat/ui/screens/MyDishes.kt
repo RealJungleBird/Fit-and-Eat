@@ -122,6 +122,7 @@ fun EditableDishCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .height(70.dp),
 
         //shape = RoundedCornerShape(0)

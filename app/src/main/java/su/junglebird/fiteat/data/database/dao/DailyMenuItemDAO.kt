@@ -7,6 +7,7 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import su.junglebird.fiteat.data.database.entities.CustomDish
 import su.junglebird.fiteat.data.database.entities.DailyMenuItem
+import su.junglebird.fiteat.data.database.entities.DayCalories
 
 @Dao
 interface DailyMenuItemDAO {
@@ -14,7 +15,7 @@ interface DailyMenuItemDAO {
     @Query("SELECT * FROM daily_menu_items WHERE date = :date")
     fun getItemsForDate(date: String): Flow<List<DailyMenuItem>>
 
-    // Получение полной информации о блюдах для даты через JOIN
+    // Получение полной информации о блюдах для даты
     @Query("""
         SELECT c.* FROM customDishes c
         INNER JOIN daily_menu_items d ON c.id = d.dishId
@@ -22,7 +23,7 @@ interface DailyMenuItemDAO {
     """)
     fun getDishesForDate(date: String): Flow<List<CustomDish>>
 
-    // Получение суммы калорий за указанную дату
+    // Получение суммы калорий за указанный день
     @Query("""
         SELECT COALESCE(SUM(c.calories), 0) FROM customDishes c
         INNER JOIN daily_menu_items d ON c.id = d.dishId
@@ -30,6 +31,20 @@ interface DailyMenuItemDAO {
     """)
     fun getTotalCaloriesForDate(date: String): Flow<Int?>
 
+
+    // Получение суммы калорий за каждый день указанного месяца
+    @Query("""
+        SELECT
+            strftime('%d', d.date) AS day,
+            COALESCE(SUM(c.calories), 0) AS calories
+        FROM daily_menu_items d
+        INNER JOIN customDishes c ON d.dishId = c.id
+        WHERE strftime('%Y-%m', d.date) = :date
+        GROUP BY day
+        ORDER BY day
+    """)
+    @Deprecated("недоделано")
+    fun getCaloriesForMonth(date: String): Flow<List<DayCalories>>
 
 
 
