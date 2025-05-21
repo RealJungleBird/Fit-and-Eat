@@ -7,9 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.Entry
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -20,6 +25,7 @@ import kotlinx.datetime.toLocalDateTime
 import su.junglebird.fiteat.data.repository.DailyMenuItemRepository
 import javax.inject.Inject
 import su.junglebird.fiteat.data.database.entities.DayCalories
+import java.time.Year
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
@@ -36,6 +42,21 @@ class AnalyticsViewModel @Inject constructor(
         .date
     )
     val currentDate get() = _currentDate.value
+
+    private val _currentMonthYear = MutableStateFlow(getCurrentMonth())
+    private val _chartEntries = MutableStateFlow<List<Entry>>(emptyList())
+    val chartEntries: StateFlow<List<Entry>> = _chartEntries.asStateFlow()
+    val currentMonthYear: StateFlow<String> = _currentMonthYear.asStateFlow()
+
+    init {
+        _currentMonthYear
+            .flatMapLatest { monthYear ->
+                menuItemRepository.getMonthlyCalories(monthYear)
+                    .map { data -> prepareChartData(data, monthYear) }
+            }
+            .onEach { entries -> _chartEntries.value = entries }
+            .launchIn(viewModelScope)
+    }
 
     // Получение данных для графика
     fun getChartData(monthYear: String): Flow<List<Entry>> {
@@ -74,61 +95,17 @@ class AnalyticsViewModel @Inject constructor(
         return (1..yearMonth.lengthOfMonth()).toList()
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    val chartData: StateFlow<List<Pair<Float, Float>>> = snapshotFlow { selectedMonth }
-//        .flatMapLatest { month ->
-//            menuItemRepository.getMonthlyCalories(month.toString())
-//        }
-//        .map { dailyData ->
-//            processDataForChart(dailyData, selectedMonth)
-//        }
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(5000),
-//            initialValue = emptyList()
-//        )
-
-    // Обработка данных: заполнение пропущенных дней нулями
-//    private fun processDataForChart(
-//        data: List<DayCalories>,
-//        monthYear: String
-//    ): List<Int> {
-//        val daysInMonth = getDaysInMonth(monthYear)
-//        return (1..daysInMonth).map { day ->
-//            data.find { it.day == day.toString() }?.calories ?: 0
-//        }
-//    }
-//
-//    private fun getCurrentMonth(): String {
-//        return SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Date())
-//    }
-//
-//    // Getting days in month number
-//    private fun getDaysInMonth(monthYear: String): Int {
-//        val calendar = Calendar.getInstance().apply {
-//            val (year, month) = monthYear.split("-").map { it.toInt() }
-//            set(year, month - 1, 1)
-//        }
-//        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-//    }
+    private fun getCurrentMonth(): String {
+        return Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault()).date
+            .let { YearMonth.of(it.year, it.month) }
+            .format(DateTimeFormatter.ofPattern("yyyy-MM"))
+    }
 
     fun changeMonth(monthOffset: Int) {
-        _currentDate.value = currentDate.plus(monthOffset, DateTimeUnit.MONTH)
+        val current = YearMonth.parse(_currentMonthYear.value, DateTimeFormatter.ofPattern("yyyy-MM"))
+        val newMonth = current.plusMonths(monthOffset.toLong())
+        _currentMonthYear.value = newMonth.format(DateTimeFormatter.ofPattern("yyyy-MM"))
     }
 
     fun setDate(newDate: LocalDate) {

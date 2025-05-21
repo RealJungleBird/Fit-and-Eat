@@ -35,7 +35,7 @@ interface DailyMenuItemDAO {
     // Получение суммы калорий за каждый день указанного месяца
     @Query("""
         SELECT d.date, SUM(c.calories) AS totalCalories
-        FROM daily_menu_items
+        FROM daily_menu_items d
         INNER JOIN customDishes c ON d.dishId = c.id
         WHERE strftime('%Y-%m', d.date) = :monthYear
         GROUP BY d.date

@@ -55,7 +55,8 @@ import java.util.Locale
 @Composable
 fun Analytics(viewModel: AnalyticsViewModel = hiltViewModel()) {
     // Состояния данных
-    val chartData by viewModel.getChartData(monthYear).collectAsState()   // Данные для размещения на графике
+    val chartData by viewModel.chartEntries.collectAsState()   // Данные для размещения на графике
+    val currentMonth by viewModel.currentMonthYear.collectAsState()
 
     // Состояния для управления UI
     var showDatePicker by remember { mutableStateOf(false) } // Активен ли диалог выбора даты
@@ -135,14 +136,12 @@ fun Analytics(viewModel: AnalyticsViewModel = hiltViewModel()) {
                     )
 
                 LineChartComposable(
-                    data = chartData,
+                    entries = chartData,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp)
                         .padding(16.dp)
                 )
-
-                Text(text=lineChartData.toString())
             }
         }
 
@@ -207,21 +206,26 @@ private fun formatMonthForDisplay(monthYear: String): String {
 
 @Composable
 fun LineChartComposable(
-    data: List<Pair<Float, Float>>,     // Данные: список пар (день, калории)
+    entries: List<Entry>,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val colors = MaterialTheme.colorScheme
+
+    val lineDataSet = LineDataSet(entries, "Калории")
+
     AndroidView(
         modifier = modifier,
         factory = { context ->
             LineChart(context).apply {
                 setupChartAppearance(context, colors)  // Настройка внешнего вида
+                data = LineData(lineDataSet)
+                invalidate()
             }
         },
-        update = { chart ->
-            updateChartData(chart, data, colors, context) // Обновление данных
-        }
+//        update = { chart ->
+//            updateChartData(chart, data, colors, context) // Обновление данных
+//        }
     )
 }
 
