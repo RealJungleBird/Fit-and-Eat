@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -90,7 +91,7 @@ fun Analytics(viewModel: AnalyticsViewModel = hiltViewModel()) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Предыдущий день")
                     }
                     Text(
-                        text = viewModel.currentDate.formatDate(),
+                        text = formatMonthForDisplay(currentMonth),
                         modifier = Modifier
                             .clickable { showDatePicker = true }
                             .padding(horizontal = 16.dp),
@@ -101,46 +102,12 @@ fun Analytics(viewModel: AnalyticsViewModel = hiltViewModel()) {
                     }
                 }
 
-                val lineChartData = listOf<Pair<Float, Float>>(
-                    Pair(1f, 1684f),
-                    Pair(2f, 1749f),
-                    Pair(3f, 1964f),
-                    Pair(4f, 1684f),
-                    Pair(5f, 1749f),
-                    Pair(6f, 1964f),
-                    Pair(7f, 1684f),
-                    Pair(8f, 1749f),
-                    Pair(9f, 1964f),
-                    Pair(10f, 1654f),
-                    Pair(11f, 1749f),
-                    Pair(12f, 1563f),
-                    Pair(13f, 1284f),
-                    Pair(14f, 1649f),
-                    Pair(15f, 1664f),
-                    Pair(16f, 1384f),
-                    Pair(17f, 1849f),
-                    Pair(18f, 1964f),
-                    Pair(19f, 1384f),
-                    Pair(20f, 1849f),
-                    Pair(21f, 1564f),
-                    Pair(22f, 1384f),
-                    Pair(23f, 1749f),
-                    Pair(24f, 1624f),
-                    Pair(25f, 1684f),
-                    Pair(26f, 1749f),
-                    Pair(27f, 1964f),
-                    Pair(28f, 1684f),
-                    Pair(29f, 1749f),
-                    Pair(30f, 1964f),
-                    Pair(31f, 1257f)
-                    )
-
                 LineChartComposable(
                     entries = chartData,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
-                        .padding(16.dp)
+                        .height(400.dp)
+                        .padding(2.dp)
                 )
             }
         }
@@ -158,6 +125,8 @@ fun Analytics(viewModel: AnalyticsViewModel = hiltViewModel()) {
         }
     }
 }
+
+
 
 // Диалог выбора даты через системный календарь
 @Composable
@@ -183,25 +152,15 @@ private fun DatePickDialog(
     datePicker.show()
 }
 
-// Форматирование даты в строку
-private fun LocalDate.formatDate(): String {
-    val formatter = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
-    return formatter.format(
-        Date(
-            year - 1900,
-            monthNumber - 1,
-            dayOfMonth
-        )
-    )
-}
-
 // Форматирование "2023-10" -> "Октябрь 2023"
 private fun formatMonthForDisplay(monthYear: String): String {
     val yearMonth = YearMonth.parse(monthYear, DateTimeFormatter.ofPattern("yyyy-MM"))
-    val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale("ru"))
-    return yearMonth.format(formatter).replaceFirstChar { it.uppercase() }
+    val months = arrayOf(
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+    )
+    return "${months[yearMonth.monthValue - 1]} ${yearMonth.year}"
 }
-
 
 
 @Composable
@@ -212,28 +171,27 @@ fun LineChartComposable(
     val context = LocalContext.current
     val colors = MaterialTheme.colorScheme
 
-    val lineDataSet = LineDataSet(entries, "Калории")
-
     AndroidView(
         modifier = modifier,
         factory = { context ->
             LineChart(context).apply {
                 setupChartAppearance(context, colors)  // Настройка внешнего вида
-                data = LineData(lineDataSet)
-                invalidate()
             }
         },
-//        update = { chart ->
-//            updateChartData(chart, data, colors, context) // Обновление данных
-//        }
+        update = { chart ->
+            updateChartData(chart, entries, colors, context) // Обновление данных
+        }
     )
 }
 
 // Настройка внешнего вида графика
 private fun LineChart.setupChartAppearance(context: Context, colors: ColorScheme) {
     description.isEnabled = false
-    legend.isEnabled = true
+    legend.isEnabled = false
     legend.textColor = colors.onSurface.toArgb()
+    setDrawBorders(true)
+    setBorderColor(colors.onSurface.toArgb())
+
 
     // Настройка оси X
     xAxis.apply {
@@ -241,7 +199,7 @@ private fun LineChart.setupChartAppearance(context: Context, colors: ColorScheme
         position = XAxis.XAxisPosition.BOTTOM
         valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
-                    return value.toString()
+                    return value.toInt().toString()
             }
         }
     }
@@ -259,11 +217,10 @@ private fun LineChart.setupChartAppearance(context: Context, colors: ColorScheme
 // Обновление данных графтка
 private fun updateChartData(
     chart: LineChart,
-    data: List<Pair<Float, Float>>,
+    entries: List<Entry>,
     colors: ColorScheme,
     context: Context
 ) {
-    val entries = data.map { Entry(it.first, it.second) }
     val dataSet = LineDataSet(entries, "Калории").apply {
         color = colors.primary.toArgb()
         valueTextColor = colors.onSurface.toArgb()
