@@ -44,6 +44,9 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import kotlinx.datetime.LocalDate
 import su.junglebird.fiteat.viewmodels.AnalyticsViewModel
 import java.text.SimpleDateFormat
+import java.time.MonthDay
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -52,7 +55,7 @@ import java.util.Locale
 @Composable
 fun Analytics(viewModel: AnalyticsViewModel = hiltViewModel()) {
     // Состояния данных
-    val chartData by viewModel.chartData.collectAsState()   // Данные для размещения на графике
+    val chartData by viewModel.getChartData(monthYear).collectAsState()   // Данные для размещения на графике
 
     // Состояния для управления UI
     var showDatePicker by remember { mutableStateOf(false) } // Активен ли диалог выбора даты
@@ -191,6 +194,13 @@ private fun LocalDate.formatDate(): String {
             dayOfMonth
         )
     )
+}
+
+// Форматирование "2023-10" -> "Октябрь 2023"
+private fun formatMonthForDisplay(monthYear: String): String {
+    val yearMonth = YearMonth.parse(monthYear, DateTimeFormatter.ofPattern("yyyy-MM"))
+    val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale("ru"))
+    return yearMonth.format(formatter).replaceFirstChar { it.uppercase() }
 }
 
 

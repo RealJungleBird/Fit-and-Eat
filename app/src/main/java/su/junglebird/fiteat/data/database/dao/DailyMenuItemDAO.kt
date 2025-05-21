@@ -34,17 +34,13 @@ interface DailyMenuItemDAO {
 
     // Получение суммы калорий за каждый день указанного месяца
     @Query("""
-        SELECT
-            strftime('%d', d.date) AS day,
-            COALESCE(SUM(c.calories), 0) AS calories
-        FROM daily_menu_items d
+        SELECT d.date, SUM(c.calories) AS totalCalories
+        FROM daily_menu_items
         INNER JOIN customDishes c ON d.dishId = c.id
-        WHERE strftime('%Y-%m', d.date) = :date
-        GROUP BY day
-        ORDER BY day
+        WHERE strftime('%Y-%m', d.date) = :monthYear
+        GROUP BY d.date
     """)
-    @Deprecated("недоделано")
-    fun getCaloriesForMonth(date: String): Flow<List<DayCalories>>
+    fun getCaloriesForMonth(monthYear: String): Flow<List<DayCalories>>
 
 
 

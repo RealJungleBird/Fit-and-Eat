@@ -4,9 +4,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.mikephil.charting.data.Entry
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -19,10 +20,8 @@ import kotlinx.datetime.toLocalDateTime
 import su.junglebird.fiteat.data.repository.DailyMenuItemRepository
 import javax.inject.Inject
 import su.junglebird.fiteat.data.database.entities.DayCalories
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 
 
 @HiltViewModel
@@ -38,37 +37,41 @@ class AnalyticsViewModel @Inject constructor(
     )
     val currentDate get() = _currentDate.value
 
-    // Поток данных, которые будут отображены в графике
-    val chartData = snapshotFlow { _currentDate.value }
-        .flatMapLatest { date ->
-            menuItemRepository.getMonthlyCalories(date.toString())
+    // Получение данных для графика
+    fun getChartData(monthYear: String): Flow<List<Entry>> {
+        return menuItemRepository.getMonthlyCalories(monthYear).map { data ->
+            prepareChartData(data, monthYear)
         }
-        .map { dailyDataRaw ->  // Преобразование DayCalories в Pair для последующей передачи в график
-            processDataForChart(dailyDataRaw)
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    }
 
+    // Преобразование DailyCalories в Entry (для MPAndroidChart)
+    private fun prepareChartData(
+        dailyCalories: List<DayCalories>,
+        monthYear: String
+    ): List<Entry> {
+        // Генерация всех дней месяца (1, 2, ..., 31)
+        val allDays = generateAllDaysInMonth(monthYear)
 
-    // Обработка данных: заполнение пропущенных дней нулями
-    private fun processDataForChart(
-        data: List<DayCalories>,
-//        monthYear: String
-    ): List<Pair<Float, Float>> {
-        // Преобразование DayCalories в Pair
-        return data.map { elem ->
-            Pair(
-                elem.day.toFloat(),
-                elem.calories.toFloat()
-            )
+        // Создание Map: дата -> калории
+        val caloriesMap = dailyCalories.associate { it.date to it.totalCalories }
+
+        // Заполнение данных (включая дни без записей)
+        return allDays.map { day ->
+            val date = formatDate(monthYear, day)
+            val calories = caloriesMap[date] ?: 0
+            Entry(day.toFloat(), calories.toFloat())
         }
-//        val daysInMonth = getDaysInMonth(monthYear)
-//        return (1..daysInMonth).map { day ->
-//            data.find { it.day == day.toString() }?.calories ?: 0
-//        }
+    }
+
+    // Форматирование даты в "yyyy-MM-dd" (для сопоставления с базой)
+    private fun formatDate(monthYear: String, day: Int): String {
+        return "$monthYear-${day.toString().padStart(2, '0')}"
+    }
+
+    // Генерация списка дней месяца
+    private fun generateAllDaysInMonth(monthYear: String): List<Int> {
+        val yearMonth = YearMonth.parse(monthYear, DateTimeFormatter.ofPattern("yyyy-MM"))
+        return (1..yearMonth.lengthOfMonth()).toList()
     }
 
 
