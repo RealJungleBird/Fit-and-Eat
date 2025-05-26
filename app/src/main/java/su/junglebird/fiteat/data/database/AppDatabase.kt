@@ -6,16 +6,19 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import su.junglebird.fiteat.data.database.dao.CustomDishDAO
 import su.junglebird.fiteat.data.database.dao.DailyMenuItemDAO
+import su.junglebird.fiteat.data.database.dao.UserInfoDAO
 import su.junglebird.fiteat.data.database.entities.CustomDish
 import su.junglebird.fiteat.data.database.entities.DailyMenuItem
+import su.junglebird.fiteat.data.database.entities.UserInfo
 
 @Database(
-    entities = [CustomDish::class, DailyMenuItem::class], // Добавлять новые сущности здесь
+    entities = [CustomDish::class, DailyMenuItem::class, UserInfo::class], // Добавлять новые сущности здесь
     version = 1,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun dishDAO(): CustomDishDAO
     abstract fun dailyMenuItemDAO(): DailyMenuItemDAO
+    abstract fun userInfoDAO(): UserInfoDAO
 
     companion object {
         @Volatile
