@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import su.junglebird.fiteat.data.database.dao.CustomDishDAO
 import su.junglebird.fiteat.data.database.AppDatabase
 import su.junglebird.fiteat.data.database.dao.DailyMenuItemDAO
+import su.junglebird.fiteat.data.database.dao.UserInfoDAO
 import javax.inject.Singleton
 
 @Module
@@ -29,5 +30,10 @@ object DatabaseModule {
     @Provides
     fun provideCurrentDishDAO(database: AppDatabase): CustomDishDAO {
         return database.dishDAO()
+    }
+
+    @Provides
+    fun provideUserInfoDAO(database: AppDatabase): UserInfoDAO {
+        return database.userInfoDAO()
     }
 }

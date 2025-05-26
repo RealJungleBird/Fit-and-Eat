@@ -1,5 +1,6 @@
 package su.junglebird.fiteat.viewmodels
 
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
