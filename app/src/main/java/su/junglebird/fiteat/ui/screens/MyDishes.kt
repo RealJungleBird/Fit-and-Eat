@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,8 +86,19 @@ fun MyDishes(viewModel: MyDishesViewModel = hiltViewModel()) {
                 bottom = padding.calculateBottomPadding()
             )
         ) {
+            // Сообщение об отсутствии элементов
             item {
-
+                if(dishes.isEmpty()) {
+                    Text(
+                        text = "Список блюд пуст. Чтобы добавить блюдо, коснитесь \"+\" и введите данные вашего блюда.",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
+                }
             }
 
             items(dishes) { dish ->

@@ -45,10 +45,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -165,6 +167,21 @@ fun DaySummary(viewModel: DaySummaryViewModel = hiltViewModel()) {
                         onRemove = { viewModel.removeFromMenu(menuItem) }
                     )
                     HorizontalDivider(thickness = 1.dp)
+                }
+            }
+
+            // Сообщение об отсутствии элементов
+            item {
+                if(dailyMenuItems.isEmpty()) {
+                    Text(
+                        text = "Вы не добавили ни одного блюда на сегодня. Чтобы добавить блюдо, коснитесь \"+\" и выберите нужное блюдо из списка.",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
                 }
             }
         }

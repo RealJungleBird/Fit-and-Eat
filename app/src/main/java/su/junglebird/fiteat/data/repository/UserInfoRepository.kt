@@ -30,7 +30,7 @@ class UserInfoRepository @Inject constructor(
     private suspend fun insertDefaultUser() {
         val defaultUser = UserInfo(
             gender = false,
-            dateOfBirth = Clock.System.now().toString(),
+            dateOfBirth = "1970-01-01",
             height = 170f,
             mass = 60f
         )
